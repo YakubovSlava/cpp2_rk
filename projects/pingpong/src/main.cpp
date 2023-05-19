@@ -10,13 +10,15 @@ public:
 
 	void ping()
 	{
+		
     	std::unique_lock<std::mutex> lock(m_);
     	while (count_.load() < MAX)
     	{
+			cv_.wait(lock, [this]{ return flag?true:false;});
         	std::cout << "Ping" << std::endl;
         	count_++;
-        	cv_.notify_all();
-        	cv_.wait(lock);
+        	flag = !flag;
+        	cv_.notify_one();
     	}
  	}
 
@@ -25,10 +27,11 @@ public:
     	std::unique_lock<std::mutex> lock(m_);
     	while (count_.load() < MAX)
     	{
+			cv_.wait(lock, [this]{ return flag?true:false;});
         	std::cout << "Pong" << std::endl;
         	count_++;
-        	cv_.notify_all();
-        	cv_.wait(lock);
+        	flag = !flag;
+        	cv_.notify_one();
     	}
 	}
 
@@ -36,6 +39,7 @@ private:
 	std::atomic<std::size_t> count_ = 0;
 	std::mutex m_;
 	std::condition_variable cv_;
+	bool flag = true;
 };
 
 int main()
