@@ -10,7 +10,7 @@ public:
 
 	void ping()
 	{
-		
+		flag =! flag;
     	std::unique_lock<std::mutex> lock(m_);
     	while (count_.load() < MAX)
     	{
@@ -39,13 +39,14 @@ private:
 	std::atomic<std::size_t> count_ = 0;
 	std::mutex m_;
 	std::condition_variable cv_;
-	bool flag = true;
+	bool flag = false;
 };
 
 int main()
 {
 	PingPong p;
 	std::thread pingThread(&PingPong::ping, &p);
+	
 	std::thread pongThread(&PingPong::pong, &p);
 
 	pingThread.join();
