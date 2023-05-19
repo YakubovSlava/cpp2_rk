@@ -23,4 +23,4 @@ add_compile_options(-Wall -Wpedantic -Werror )
 
 # include_directories(${CMAKE_SOURCE_DIR}/include)
 
-add_subdirectory(projects/pingpong)
+add_subdirectory(projects/ping_pong)
